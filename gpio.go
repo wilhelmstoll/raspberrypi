@@ -9,6 +9,7 @@ package raspberrypi
 import (
 	"io/ioutil"
 	"os"
+	"time"
 )
 
 // Gpio represents the collection of pins of the raspberry pi.
@@ -20,6 +21,7 @@ func (r Gpio) Pin(name string) GpioPin {
 	filename := pin.Filename()
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		ioutil.WriteFile("/sys/class/gpio/export", []byte(pin.Name), 0666)
+		waitProcessingTime()
 	}
 
 	return pin
@@ -39,6 +41,7 @@ func (r GpioPin) Filename() string {
 func (r GpioPin) write(where, what string) {
 	filename := r.Filename() + "/" + where
 	ioutil.WriteFile(filename, []byte(what), 0666)
+	waitProcessingTime()
 }
 
 // Output sets the pin mode to output.
@@ -54,4 +57,9 @@ func (r GpioPin) High() {
 // Low sets the value to 0.
 func (r GpioPin) Low() {
 	r.write("value", "0")
+}
+
+// WaitProcessingTime waits a defined timespan.
+func waitProcessingTime() {
+	time.Sleep(200 * time.Millisecond)
 }
