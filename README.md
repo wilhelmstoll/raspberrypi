@@ -16,6 +16,8 @@ go get -u github.com/wilhelmstoll/raspberrypi
 package main
 
 import (
+	"time"
+
 	"github.com/wilhelmstoll/raspberrypi"
 )
 
@@ -27,6 +29,9 @@ func main() {
 
 	// Sets the pin to output mode (initial value low).
 	gpioPin18.Output()
+
+	// Wait until the raspberry pi has processed the changes.
+	time.Sleep(200 * time.Millisecond)
 
 	// Sets the pin to high.
 	gpioPin18.High()
