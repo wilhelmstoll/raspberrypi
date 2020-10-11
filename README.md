@@ -24,11 +24,11 @@ import (
 func main() {
 	gpio := raspberrypi.Gpio{}
 
-	// Initializes pin 18 as output pin.
-	gpioPin18 := gpio.Out("18")
+	// Initializes pin 23 as output pin.
+	gpioPin23 := gpio.Out("23")
 
 	// Sets the pin to high.
-	gpioPin18.On()
+	gpioPin23.On()
 }
 ```
 
