@@ -27,8 +27,9 @@ func (r Gpio) Out(pin string) GpioOut {
 
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		writeFile("/sys/class/gpio/export", []byte(out.Pin))
-		writeFile(direction, []byte("out"))
 	}
+
+	writeFile(direction, []byte("out"))
 
 	return out
 }
