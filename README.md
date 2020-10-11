@@ -4,6 +4,8 @@ Pure go implementation of raspberry pi functions.
 
 **Currently only the base GPIO output functions are implemented!**
 
+**Processing time for gpio operation is set to 200ms for this module!**
+
 ## Installation
 
 ```
