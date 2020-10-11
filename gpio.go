@@ -12,54 +12,55 @@ import (
 	"time"
 )
 
+// ProcessingTime represents the time that the board needs to process the changes.
+const ProcessingTime = 200 // ms
+
 // Gpio represents the collection of pins of the raspberry pi.
 type Gpio struct{}
 
-// Pin returns a specific pin (also initialize the pin for the system).
-func (r Gpio) Pin(name string) GpioPin {
-	pin := GpioPin{name}
-	filename := pin.Filename()
+// Out returns a specific pin (also initializes and configures to output the pin for the system).
+func (r Gpio) Out(pin string) GpioOut {
+	out := GpioOut{pin}
+
+	filename := out.Filename()
+	direction := filename + "/direction"
+
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		ioutil.WriteFile("/sys/class/gpio/export", []byte(pin.Name), 0666)
-		waitProcessingTime()
+		writeFile("/sys/class/gpio/export", []byte(out.Pin))
+		writeFile(direction, []byte("out"))
 	}
 
-	return pin
+	return out
 }
 
-// GpioPin represents a specific pin of the raspberry pi.
-type GpioPin struct {
-	Name string
+// GpioOut represents a specific output pin of the raspberry pi.
+type GpioOut struct {
+	Pin string
 }
 
 // Filename returns the absolute path of the pin.
-func (r GpioPin) Filename() string {
-	return "/sys/class/gpio/gpio" + r.Name
+func (r GpioOut) Filename() string {
+	return "/sys/class/gpio/gpio" + r.Pin
 }
 
-// Write changes the transferred file with the transferred value.
-func (r GpioPin) write(where, what string) {
+// Write changes to the given file.
+func (r GpioOut) write(where, what string) {
 	filename := r.Filename() + "/" + where
-	ioutil.WriteFile(filename, []byte(what), 0666)
-	waitProcessingTime()
+	writeFile(filename, []byte(what))
 }
 
-// Output sets the pin mode to output.
-func (r GpioPin) Output() {
-	r.write("direction", "out")
-}
-
-// High sets the value to 1.
-func (r GpioPin) High() {
+// On sets the value of the pin to 1.
+func (r GpioOut) On() {
 	r.write("value", "1")
 }
 
-// Low sets the value to 0.
-func (r GpioPin) Low() {
+// Off sets the value of the pin to 0.
+func (r GpioOut) Off() {
 	r.write("value", "0")
 }
 
-// WaitProcessingTime waits a defined timespan.
-func waitProcessingTime() {
-	time.Sleep(200 * time.Millisecond)
+// Write changes to the given file and wait processing time.
+func writeFile(filename string, data []byte) {
+	ioutil.WriteFile(filename, data, 0666)
+	time.Sleep(ProcessingTime * time.Millisecond)
 }

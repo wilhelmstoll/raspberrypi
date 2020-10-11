@@ -2,7 +2,7 @@
 
 Pure go implementation of raspberry pi functions.
 
-**Currently only the base GPIO functions are implemented!**
+**Currently only the base GPIO output functions are implemented!**
 
 ## Installation
 
@@ -22,14 +22,11 @@ import (
 func main() {
 	gpio := raspberrypi.Gpio{}
 
-	// Initializes pin 18 (initial mode input).
-	gpioPin18 := gpio.Pin("18")
-
-	// Sets the pin to output mode (initial value low).
-	gpioPin18.Output()
+	// Initializes pin 18 as output pin.
+	gpioPin18 := gpio.Out("18")
 
 	// Sets the pin to high.
-	gpioPin18.High()
+	gpioPin18.On()
 }
 ```
 
